@@ -2,7 +2,7 @@ import React from "react";
 
 export default class Workspace extends React.Component {
     render() {
-        const { currentList } = this.props;
+        const { currentList, editItemCallback } = this.props;
         let names = ["","","","",""];
         if (currentList) {
             names = currentList.items;
@@ -18,11 +18,11 @@ export default class Workspace extends React.Component {
                         <div className="item-number">5.</div>
                     </div>
                     <div id="edit-items">
-                        <div id='item-1' className="top5-item">{names[0]}</div>
-                        <div id='item-2' className="top5-item">{names[1]}</div>
-                        <div id='item-3' className="top5-item">{names[2]}</div>
-                        <div id='item-4' className="top5-item">{names[3]}</div>
-                        <div id='item-5' className="top5-item">{names[4]}</div>
+                        <div id='item-1' className="top5-item" onDoubleClick={() => editItemCallback(1)}>{names[0]}</div>
+                        <div id='item-2' className="top5-item" onDoubleClick={() => editItemCallback(2)}>{names[1]}</div>
+                        <div id='item-3' className="top5-item" onDoubleClick={() => editItemCallback(3)}>{names[2]}</div>
+                        <div id='item-4' className="top5-item" onDoubleClick={() => editItemCallback(4)}>{names[3]}</div>
+                        <div id='item-5' className="top5-item" onDoubleClick={() => editItemCallback(5)}>{names[4]}</div>
                     </div>
                 </div>
             </div>

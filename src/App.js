@@ -27,6 +27,10 @@ class App extends React.Component {
             sessionData : loadedSessionData
         }
     }
+    ignoreParentClick(event) {
+        event.cancelBubble = true;
+        if (event.stopPropagation) event.stopPropagation();
+    }
     sortKeyNamePairsByName = (keyNamePairs) => {
         keyNamePairs.sort((keyPair1, keyPair2) => {
             // GET THE LISTS
@@ -125,10 +129,6 @@ class App extends React.Component {
         });
     }
     deleteList = () => {
-        // SOMEHOW YOU ARE GOING TO HAVE TO FIGURE OUT
-        // WHICH LIST IT IS THAT THE USER WANTS TO
-        // DELETE AND MAKE THAT CONNECTION SO THAT THE
-        // NAME PROPERLY DISPLAYS INSIDE THE MODAL
         this.showDeleteListModal();
     }
     // THIS FUNCTION SHOWS THE MODAL FOR PROMPTING THE USER
@@ -141,6 +141,37 @@ class App extends React.Component {
     hideDeleteListModal() {
         let modal = document.getElementById("delete-modal");
         modal.classList.remove("is-visible");
+    }
+    editListElement = (idx) => {
+        if (this.state.currentList) {
+            // CLEAR THE TEXT
+            let item = document.getElementById("item-" + idx);
+            item.innerHTML = "";
+
+            // ADD A TEXT FIELD
+            let textInput = document.createElement("input");
+            textInput.setAttribute("type", "text");
+            textInput.setAttribute("id", "item-text-input-" + idx);
+            textInput.setAttribute("value", this.state.currentList.items[idx-1]);
+
+            item.appendChild(textInput);
+
+            textInput.ondblclick = (event) => {
+                this.ignoreParentClick(event);
+            }
+            textInput.onkeydown = (event) => {
+                if (event.key === 'Enter') {
+                    this.state.currentList.items[idx-1] = event.target.value;
+                    this.db.mutationUpdateList(this.state.currentList);
+                    item.innerHTML = event.target.value;
+                }
+            }
+            textInput.onblur = (event) => {
+                this.state.currentList.items[idx-1] = event.target.value;
+                this.db.mutationUpdateList(this.state.currentList);
+                item.innerHTML = event.target.value;
+            }
+        }
     }
     render() {
         return (
@@ -158,7 +189,8 @@ class App extends React.Component {
                     renameListCallback={this.renameList}
                 />
                 <Workspace
-                    currentList={this.state.currentList} />
+                    currentList={this.state.currentList}
+                    editItemCallback={this.editListElement} />
                 <Statusbar 
                     currentList={this.state.currentList} />
                 <DeleteModal
